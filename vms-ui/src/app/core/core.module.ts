@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ValidateService } from './services/validate.service';
 
 
 @NgModule({
@@ -9,6 +10,9 @@ import { CommonModule } from '@angular/common';
     CommonModule
   ],
   exports: [
+  ],
+  providers: [
+    ValidateService
   ]
 })
 export class CoreModule { }

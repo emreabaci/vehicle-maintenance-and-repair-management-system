@@ -10,6 +10,10 @@ const UserSchema = mongoose.Schema ({
     type: String,
     required: true
   },
+  telephone: {
+    type: String,
+    required: true
+  },
   username: {
     type: String,
     required: true
@@ -22,8 +26,8 @@ const UserSchema = mongoose.Schema ({
       type: String,
       default: "user",
       enum: ["user", "admin"]
-  }
-});
+  },
+}, { timestamps: true });
 
 const User = module.exports = mongoose.model('User', UserSchema);
 
@@ -40,6 +44,7 @@ module.exports.addUser = function(newUser, callback) {
   bcrypt.genSalt(10, (err, salt) => {
     bcrypt.hash(newUser.password, salt, (err, hash) => {
       if(err) throw err;
+
       newUser.password = hash;
       newUser.save(callback);
     });
