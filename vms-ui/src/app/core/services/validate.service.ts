@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Maintenance } from 'src/app/dashboard/models/Maintenance';
 
 @Injectable()
 export class ValidateService {
@@ -21,5 +22,13 @@ export class ValidateService {
 
   validateConfirmPassword(password: string, confirmPassword: string){
     return password == confirmPassword;
+  }
+
+  validateAddMaintenance(plateNumber: string, maintenances: Maintenance[]){
+    if(plateNumber == "" || maintenances.length == 0 ){
+      return false;
+    } else {
+      return true;
+    }
   }
 }

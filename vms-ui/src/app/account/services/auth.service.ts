@@ -69,6 +69,10 @@ export class AuthService {
       return authToken !== null ? true : false;
   }
 
+  get currentUser(){
+    return this.user;
+  }
+
   private extractData(res: any){
     return res;
   }

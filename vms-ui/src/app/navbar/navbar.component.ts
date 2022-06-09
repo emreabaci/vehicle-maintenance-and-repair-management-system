@@ -13,6 +13,10 @@ export class NavbarComponent implements OnInit {
     return this.authService.loggedIn;
   }
 
+  get username(){
+    return this.authService.currentUser?.name;
+  }
+
   constructor(private authService: AuthService) { }
 
   ngOnInit(): void {
