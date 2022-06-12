@@ -31,4 +31,12 @@ export class ValidateService {
       return true;
     }
   }
+
+  validateUpdateMaintenance(plateNumber: string, description: string){
+    if(plateNumber == "" || description == ""){
+      return false;
+    } else {
+      return true;
+    }
+  }
 }
