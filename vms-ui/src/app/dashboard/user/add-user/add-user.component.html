@@ -1,0 +1,59 @@
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Add User</h1>
+  </div>
+  
+  <div class="row col-6 mb-4 mx-auto">
+    <div class="d-flex justify-content-center m-2">
+        <div class="bg-light p-3">
+          <div class="form-check-inline">
+            <input class="form-check-input" type="radio" name="role" id="adminRadio" [(ngModel)]="role" value="admin" checked>
+            <label class="form-check-label" for="adminRadio">
+              Admin
+            </label>
+          </div>
+          <div class="form-check-inline">
+            <input class="form-check-input" type="radio" name="role" id="userRadio" [(ngModel)]="role" value="user">
+            <label class="form-check-label" for="userRadio">
+              User
+            </label>
+          </div>
+        </div>
+       </div>
+
+    <form (submit)="onRegisterSubmit()">  
+        <div class="alert alert-danger" role="alert" *ngIf="errorMsg">
+          {{errorMsg}}
+        </div>
+  
+        <div class="alert alert-success" role="alert" *ngIf="successMsg">
+          {{successMsg}}
+        </div>
+  
+        <div class="form-floating mb-1">
+          <input type="text" class="form-control" [(ngModel)]="name" id="name" name="name" placeholder="Name">
+          <label for="name">Name</label>
+        </div>
+        <div class="form-floating mb-1">
+          <input type="text" class="form-control" [(ngModel)]="username" id="username" name="username" [attr.placeholder]="role == 'admin' ? 'Username' : 'Plate number'">
+          <label for="username">{{role == "admin" ? 'Username' : 'Plate number'}}</label>
+        </div>
+        <div class="form-floating mb-1">
+          <input type="email" class="form-control" [(ngModel)]="email" id="email" name="email" placeholder="name@example.com">
+          <label for="email">Email address</label>
+        </div>
+        <div class="form-floating mb-1">
+          <input type="tel" class="form-control" [(ngModel)]="telephone" id="telephone" name="telephone" placeholder="Telephone">
+          <label for="password">Telephone</label>
+        </div>
+        <div class="form-floating mb-1">
+          <input type="password" class="form-control" [(ngModel)]="password" id="password" name="password" placeholder="Password" autocomplete="off">
+          <label for="password">Password</label>
+        </div>
+        <div class="form-floating mb-1">
+          <input type="password" class="form-control" [(ngModel)]="confirmPassword" id="confirmPassword" name="confirmPassword" autocomplete="off" placeholder="Password">
+          <label for="confirmPassword">Confirm Password</label>
+        </div>
+  
+        <button class="w-100 btn btn-lg btn-primary mt-4" type="submit">Create</button>
+      </form>
+  </div>

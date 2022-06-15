@@ -15,10 +15,22 @@
       <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
         <ul class="list-unstyled ps-0 pt-3">
           <li class="mb-1">
-            <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="false">
+            <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#user-collapse" aria-expanded="false">
+              User
+            </button>
+            <div class="collapse" id="user-collapse">
+              <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded" routerLink="/dashboard/user/add">Add User</a></li>
+                <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded" routerLink="/dashboard/user/list">All List Users</a></li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="mb-1">
+            <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#vehicle-record-collapse" aria-expanded="false">
               Vehicle Record
             </button>
-            <div class="collapse" id="home-collapse">
+            <div class="collapse" id="vehicle-record-collapse">
               <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                 <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded" routerLink="/dashboard/maintenance/add">Add Vehicle Record</a></li>
                 <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded" routerLink="/dashboard/maintenance/list">All List Vehicles</a></li>
@@ -33,10 +45,10 @@
             </button>
             <div class="collapse" id="account-collapse">
               <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">New...</a></li>
-                <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Profile</a></li>
+                <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded" routerLink="/dashboard/profile/view">Profile</a></li>
+               <!--<li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">New...</a></li>
                 <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Settings</a></li>
-                <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Sign out</a></li>
+                <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Sign out</a></li>-->
               </ul>
             </div>
           </li>
@@ -46,6 +58,9 @@
       <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
         <router-outlet></router-outlet>
       </main>
+      
+      <canvas class="my-4 w-100 chartjs-render-monitor" id="myChart" width="801" height="338" style="display: block; width: 801px; height: 338px;"></canvas>
+
   <!--
       <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">

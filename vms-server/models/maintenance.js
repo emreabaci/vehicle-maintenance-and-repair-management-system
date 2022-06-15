@@ -66,3 +66,15 @@ const MaintenanceSchema = mongoose.Schema ({
   module.exports.updateMaintenance = function(query, newValues) {
     return Maintenance.updateOne(query, newValues);
   }
+
+  module.exports.getMaintenancesByAggrate = function(){
+    return Maintenance.aggregate([
+      {$match: {type: 0}},
+      { $group : { _id : {type: "$type", plateNumber: "$plateNumber"} } } ] );
+  }
+
+  module.exports.getRepaitsByAggrate = function(){
+    return Maintenance.aggregate([
+      {$match: {type: 1}},
+      { $group : { _id : {type: "$type", plateNumber: "$plateNumber"} } } ] );
+  }

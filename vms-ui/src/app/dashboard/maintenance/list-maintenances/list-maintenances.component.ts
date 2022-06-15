@@ -86,7 +86,7 @@ export class ListMaintenancesComponent implements OnInit, OnDestroy, AfterViewIn
     this.getAllMaintenances(number, this._plateNumber);
   }
 
-  getAllMaintenances(currentPage: number, searchByPlateNumber?: string, type?:number){
+  private getAllMaintenances(currentPage: number, searchByPlateNumber?: string, type?:number){
     this.maintenanceService.getAllMaintenances(currentPage, searchByPlateNumber, type).subscribe((data) => {
       if(data.success){
         this.pageNo = currentPage;

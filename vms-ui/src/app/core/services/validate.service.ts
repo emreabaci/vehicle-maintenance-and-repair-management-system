@@ -39,4 +39,12 @@ export class ValidateService {
       return true;
     }
   }
+
+  validateUpdateUser(name: string, username: string, email: string, telephone: string){
+    if(name == "" || username == "" || email == "" || telephone == ""){
+      return false;
+    } else {
+      return true;
+    }
+  }
 }

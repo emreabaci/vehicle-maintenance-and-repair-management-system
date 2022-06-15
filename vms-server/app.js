@@ -23,6 +23,7 @@ const app = express();
 
 const users = require('./routes/users');
 const maintenances = require('./routes/maintenances');
+const statistics = require('./routes/statistics');
 
 // Port Number
 const port = 3000;
@@ -44,6 +45,7 @@ require('./config/passport')(passport);
 
 app.use('/users', users);
 app.use('/maintenances', maintenances);
+app.use('/statistics', statistics);
 
 // Index Route
 app.get('/', (req, res) => {

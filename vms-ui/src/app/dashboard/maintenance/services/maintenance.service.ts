@@ -80,5 +80,5 @@ export class MaintenanceService {
   private handleErrorObservable(error: any) {
     console.error(error.message || error);
     return throwError(error);
-}
+  }
 }

@@ -14,7 +14,7 @@
               <a class="nav-link" aria-current="page">Hello, {{username}}</a>
           </li>
           <li class="nav-item" *ngIf="isUserLoggedIn">
-            <a class="nav-link" aria-current="page" routerLink="/dashboard">Dashboard</a>
+            <a class="nav-link" aria-current="page" routerLink="/dashboard/chart">Dashboard</a>
         </li>
             <li class="nav-item" *ngIf="isUserLoggedIn">
                 <a class="nav-link" aria-current="page" href="" (click)="logout()">Logout</a>

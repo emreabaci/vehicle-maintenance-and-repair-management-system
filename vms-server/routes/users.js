@@ -12,7 +12,8 @@ router.post('/register', (req, res, next) => {
     email: req.body.email,
     telephone: req.body.telephone,
     username: req.body.username,
-    password: req.body.password
+    password: req.body.password,
+    role: req.body.role
   });
 
   User.addUser(newUser, (err, user) => {
@@ -63,6 +64,59 @@ router.post('/authenticate', (req, res, next) => {
 // Profile
 router.get('/profile', passport.authenticate('jwt', {session:false}), (req, res, next) => {
   res.json({user: req.user});
+});
+
+// Get All Users
+router.get('/', passport.authenticate('jwt', {session:false}), async (req, res, next) => {
+  const pageNo = parseInt(req.query.pageNo);
+  const size = parseInt(req.query.size);
+  const searchByUsernameOrPlateNumber = req.query.search || null;
+  const role = req.query.role;
+
+  if(pageNo < 0 || pageNo === 0) {
+    return res.json({success: false, msg: "invalid page number, should start with 1"})
+  }
+
+  var query = {};
+  query.skip = size * (pageNo - 1);
+  query.limit = size;
+
+  let totalCount;
+  let users;
+
+  if(searchByUsernameOrPlateNumber){
+    totalCount = await User.getUsersTotalCountByUsernameOrPlateNumber(searchByUsernameOrPlateNumber, role);
+    users = await User.getUsersByUsernameOrPlateNumber(query, searchByUsernameOrPlateNumber, role);
+  } else {
+    totalCount = await User.getUsersTotalCount(role);
+    users = await User.getUsers(query, role);
+  }
+
+  res.json({success: true, users: users, count: totalCount});
+})
+
+// Get All Users
+router.delete('/:id', passport.authenticate('jwt', {session:false}), async (req, res, next) => {
+  await User.deleteUser(req.params.id);
+  res.json({success: true});
+})
+
+// Update User
+router.put('/', passport.authenticate('jwt', {session:false}), async(req, res, next) => {
+  const _id = req.body.id;
+  const role = req.body.role;
+  const name = req.body.name;
+  const username = req.body.username;
+  const email = req.body.email;
+  const telephone = req.body.telephone;
+  const password = req.body.password;
+
+  const query = { _id };
+  const newvalues = { $set: {role, name, username, email, telephone, password}};
+
+  const _res = await User.updateUser(query, newvalues);
+
+  res.json({success: true, msg: 'User updated', res: _res});
 });
 
 module.exports = router;
