@@ -5,13 +5,55 @@ const cors = require("cors");
 const passport = require("passport");
 const mongoose = require("mongoose");
 const config = require('./config/database');
+const User = require('./models/user');
 
 // Connect To Database
 mongoose.connect(config.database);
 
 // On Connection
-mongoose.connection.on('connected', () => {
+mongoose.connection.on('connected', async() => {
     console.log(`Connected to database ${config.database}`);
+
+    const countAdmin = await User.getUsersTotalCount("admin");
+    const countUser = await User.getUsersTotalCount("user");
+   
+    if(!countAdmin){
+        let newAdminUser = new User ({
+            name: "administrator",
+            email: "admin@admin.com",
+            telephone: "05376666666",
+            username: "admin",
+            password: "asd123FF",
+            role: "admin"
+          });
+        
+          User.addUser(newAdminUser, (err, user) => {
+            if(err) {
+              console.log('Failed to register default admin user');
+            } else {
+              console.log('Default admin user registered');
+            }
+          });
+    }
+
+    if(!countUser){
+        let newNormalUser = new User ({
+            name: "test",
+            email: "test@test.com",
+            telephone: "05376666666",
+            username: "test",
+            password: "asd123FF",
+            role: "user"
+          });
+        
+          User.addUser(newNormalUser, (err, user) => {
+            if(err) {
+              console.log('Failed to register default test user');
+            } else {
+              console.log('Default test user registered');
+            }
+          });
+    }
 });
 
 // On Error

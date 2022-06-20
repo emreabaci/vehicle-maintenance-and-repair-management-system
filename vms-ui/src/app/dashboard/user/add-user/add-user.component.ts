@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { AuthService } from 'src/app/account/services/auth.service';
 import { ValidateService } from 'src/app/core/services/validate.service';
 
@@ -18,9 +19,12 @@ export class AddUserComponent implements OnInit {
   errorMsg: string = "";
   successMsg: string = "";
 
-  constructor(private validateService: ValidateService, private authService: AuthService) { }
+  constructor(private validateService: ValidateService, private authService: AuthService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
+    if(this.route.snapshot.paramMap.get('type')){
+      this.role = this.route.snapshot.paramMap.get('type') || "admin";
+    }
   }
 
   onRegisterSubmit(): any{

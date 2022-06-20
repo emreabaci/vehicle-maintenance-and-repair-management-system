@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AdminGuard } from '../core/guards/admin.guard';
 import { ChartComponent } from './chart/chart.component';
 import { DashboardComponent } from './dashboard.component';
 import { AddMaintenanceComponent } from './maintenance/add-maintenance/add-maintenance.component';
@@ -12,19 +13,28 @@ const routes: Routes = [
   {path: '', component: DashboardComponent, children: [
     {
       path: 'user/add',
-      component: AddUserComponent
+      component: AddUserComponent,
+      canActivate: [AdminGuard]
+    },
+    {
+      path: 'user/add/:type',
+      component: AddUserComponent,
+      canActivate: [AdminGuard]
     },
     {
       path: 'user/list',
-      component: ListUserComponent
+      component: ListUserComponent,
+      canActivate: [AdminGuard]
     },
     {
       path: 'maintenance/add',
-      component: AddMaintenanceComponent
+      component: AddMaintenanceComponent,
+      canActivate: [AdminGuard]
     },
     {
       path: 'maintenance/list',
-      component: ListMaintenancesComponent
+      component: ListMaintenancesComponent,
+      canActivate: [AdminGuard]
     },
     {
       path: 'profile/view',
@@ -33,7 +43,8 @@ const routes: Routes = [
     {
       path: 'chart',
       component: ChartComponent
-    }
+    },
+    { path: '**', redirectTo: 'chart'}
   ]}
 ];
 

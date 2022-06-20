@@ -14,7 +14,7 @@
     <div class="row">
       <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
         <ul class="list-unstyled ps-0 pt-3">
-          <li class="mb-1">
+          <li class="mb-1" *ngIf="isAdmin">
             <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#user-collapse" aria-expanded="false">
               User
             </button>
@@ -26,7 +26,7 @@
             </div>
           </li>
 
-          <li class="mb-1">
+          <li class="mb-1" *ngIf="isAdmin">
             <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#vehicle-record-collapse" aria-expanded="false">
               Vehicle Record
             </button>
@@ -38,7 +38,7 @@
             </div>
           </li>
 
-          <li class="border-top my-3"></li>
+          <li class="border-top my-3" *ngIf="isAdmin"></li>
           <li class="mb-1">
             <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#account-collapse" aria-expanded="false">
               Account
@@ -46,6 +46,7 @@
             <div class="collapse" id="account-collapse">
               <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                 <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded" routerLink="/dashboard/profile/view">Profile</a></li>
+                <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded" routerLink="/dashboard/profile/view">See Last Records</a></li>
                <!--<li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">New...</a></li>
                 <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Settings</a></li>
                 <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Sign out</a></li>-->

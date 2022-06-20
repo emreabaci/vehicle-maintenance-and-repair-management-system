@@ -1,7 +1,9 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
+import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs';
 import { AuthService } from 'src/app/account/services/auth.service';
 import { Maintenance } from '../../models/Maintenance';
 import { VehicleAssignType } from '../../models/vehicle-assign-type';
+import { UserService } from '../../user/service/user.service';
 import { MaintenanceService } from '../services/maintenance.service';
 
 @Component({
@@ -9,16 +11,54 @@ import { MaintenanceService } from '../services/maintenance.service';
   templateUrl: './add-maintenance.component.html',
   styleUrls: ['./add-maintenance.component.scss']
 })
-export class AddMaintenanceComponent{
-  plateNumber: string = ""
+export class AddMaintenanceComponent implements OnInit{
+  //plateNumber: string = ""
   newMaintenanceDescription: string = "";
   maintenancesFormItems: Maintenance[] = [];
+  searchUsers: any[] = [];
   vehicleAssignType: VehicleAssignType = VehicleAssignType.MAINTENANCE;
 
   errorMsg: string = "";
   successMsg: string = "";
 
-  constructor(private maintenanceService: MaintenanceService, private authService: AuthService) { }
+  // Live search
+  @Input() plateNumber: string = "";
+  @Input() debounceTime = 300;
+  
+  inputValue = new Subject<string>();
+  trigger = this.inputValue.pipe(
+    debounceTime(this.debounceTime),
+    distinctUntilChanged()
+  );
+  subscriptions: Subscription[] = [];
+  showEmptyItem = false;
+
+  constructor(private maintenanceService: MaintenanceService, private authService: AuthService, private usersService: UserService) { }
+  
+  ngOnInit(): void {
+    const subscription = this.trigger.subscribe(currentValue => {
+      if(currentValue.length > 2){
+        this.usersService.getAllUsers(1, currentValue, "user").subscribe((data) => {
+            if(data.success){
+              this.searchUsers = [];
+              for(let user of data.users){      
+                this.searchUsers.push({
+                  username: user.username
+                });
+              }
+
+              if(this.searchUsers.length == 0){
+                this.showEmptyItem = true;
+              }
+            }
+        })
+      } else {
+        this.searchUsers = [];
+        this.showEmptyItem = false;
+      }
+    });
+    this.subscriptions.push(subscription);
+  }
 
   changeAssignType(type: number){
     if(type == VehicleAssignType.MAINTENANCE){
@@ -59,6 +99,15 @@ export class AddMaintenanceComponent{
         this.showError("Something went wrong");
       }
     })
+  }
+
+  searchByPlateNumber(event: any){
+    this.inputValue.next(event.target.value);
+  }
+
+  selectedLiveSearch(data: any){
+    this.plateNumber = data.username;
+    this.searchUsers = [];
   }
 
   private showError(message: string){

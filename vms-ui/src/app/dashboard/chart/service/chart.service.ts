@@ -17,7 +17,7 @@ export class ChartService {
       'Authorization': this.authService.authToken
     });   
 
-    return this.http.get(`http://localhost:3000/statistics}`, { headers: httpHeaders }).pipe(
+    return this.http.get(`http://localhost:3000/statistics`, { headers: httpHeaders }).pipe(
       map(this.extractData),
       catchError(this.handleErrorObservable)
     )

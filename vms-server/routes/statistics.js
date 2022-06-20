@@ -3,7 +3,7 @@ const router = express.Router();
 const User = require('../models/user');
 const Maintenance = require('../models/maintenance');
 
-// Register
+// Statistics
 router.get('/', async (req, res, next) => {
     const totalUser = await User.getUsersTotalCount();
     const maintenances = await Maintenance.getMaintenancesByAggrate();

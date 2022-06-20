@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from '../account/services/auth.service';
 import { Page } from './models/page';
 
 @Component({
@@ -7,13 +8,13 @@ import { Page } from './models/page';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit, AfterViewInit {
+export class DashboardComponent implements OnInit {
   activePage : string;
-  ea: string;
 
-  constructor(private router: Router) { }
-  ngAfterViewInit(): void {
-    
+  constructor(private router: Router, private authService: AuthService) { }
+
+  get isAdmin():boolean{
+    return this.authService.isAdmin;
   }
 
   ngOnInit(): void {

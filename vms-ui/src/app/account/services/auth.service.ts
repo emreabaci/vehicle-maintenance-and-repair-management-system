@@ -73,6 +73,10 @@ export class AuthService {
     return this.user;
   }
 
+  get isAdmin():boolean{
+    return this.user?.role == 'admin';
+  }
+
   private extractData(res: any){
     return res;
   }

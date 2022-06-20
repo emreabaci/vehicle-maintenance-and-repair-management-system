@@ -104,7 +104,7 @@ export class ListMaintenancesComponent implements OnInit, OnDestroy, AfterViewIn
             id: maintenance._id,
             type: maintenance.type,
             plateNumber: maintenance.plateNumber,
-            createdByName: maintenance.createdBy.name,
+            createdByName: maintenance.createdBy?.name,
             description: maintenance.description,
             createdAt: maintenance.createdAt
           }
