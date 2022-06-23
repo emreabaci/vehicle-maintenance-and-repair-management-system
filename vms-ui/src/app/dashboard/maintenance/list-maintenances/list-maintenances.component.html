@@ -2,10 +2,6 @@
   <h1 class="h2">List All Maintenances</h1>
 </div>
 
-<div class="alert alert-primary" role="alert" *ngIf="allMaintenances.length == 0">
-  There is no maintenance
-</div>
-
 <div class="alert alert-danger" role="alert" *ngIf="errorMsg">
   {{errorMsg}}
 </div>
@@ -43,6 +39,10 @@
   </div>
  </div>
 
+ <div class="alert alert-primary" role="alert" *ngIf="allMaintenances.length == 0">
+  There is no maintenance
+</div>
+
 <div class="table-responsive" *ngIf="allMaintenances.length > 0">
   <table class="table table-striped table-sm">
     <thead>
@@ -51,7 +51,7 @@
         <th scope="col">Plate Number</th>
         <th scope="col">Type</th>
         <th scope="col">Creator Name</th>
-        <th scope="col">Description</th>
+        <th scope="col">Record Count</th>
         <th scope="col">Created Date</th>
         <th scope="col"></th>
       </tr>
@@ -61,12 +61,11 @@
         <td>{{index + 1}}</td>
         <td class="text-truncate">{{maintenance.plateNumber}}</td>
         <td class="text-truncate">{{maintenance.type == 0 ? 'Maintenance' : 'Repair'}}</td>
-        <td class="text-truncate">{{maintenance.createdByName}}</td>
-        <td class="text-truncate">{{maintenance.description}}</td>
+        <td class="text-truncate">{{maintenance.createdBy.name}}</td>
+        <td class="text-truncate">{{maintenance.records.length}}</td>
         <td class="text-truncate">{{maintenance.createdAt | date: 'dd/MM/yyyy HH:mm'}}</td>
         <td class="text-truncate col-1">
-          <a class="text-decoration-none m-1" data-bs-toggle="modal" data-bs-target="#updateModal" [attr.data-bs-id]="maintenance.id" [attr.data-bs-type]="maintenance.type" 
-          [attr.data-bs-description]="maintenance.description" [attr.data-bs-plateNumber]="maintenance.plateNumber">
+          <a class="text-decoration-none m-1" data-bs-toggle="modal" data-bs-target="#updateMaintenanceModal" (click)="selectMaintenance(maintenance)">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
               class="bi bi-pencil-square" viewBox="0 0 16 16">
               <path
@@ -114,8 +113,8 @@
 </div>
 
 <!-- Update Modal -->
-<div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+<div class="modal fade" id="updateMaintenanceModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Update</h5>
@@ -125,21 +124,21 @@
         <form>
           <div class="mb-3">
             <label for="updateMaintenancePlateNumber" class="col-form-label">Plate Number</label>
-            <input type="text" class="form-control" id="updateMaintenancePlateNumber" name="updateMaintenancePlateNumber" [(ngModel)]="updateMaintenanceItem.plateNumber" autocomplete="off">
+            <input type="text" class="form-control" id="updateMaintenancePlateNumber" name="updateMaintenancePlateNumber" [(ngModel)]="updateMaintenance.plateNumber" autocomplete="off">
           </div>
 
           <div class="d-flex justify-content-center m-2">
             <div class="bg-light p-3">
               <div class="form-check-inline">
-                <input class="form-check-input" type="radio" name="vehicleAssignTypeUpdate" id="maintenanceRadioByVehicle" [checked]="updateMaintenanceItem.type == 0"
-                [(ngModel)]="updateMaintenanceItem.type" value="0">
+                <input class="form-check-input" type="radio" name="vehicleAssignTypeUpdate" id="maintenanceRadioByVehicle" [value]="0"
+                [(ngModel)]="updateMaintenance.type" >
                 <label class="form-check-label" for="maintenanceRadioByVehicle">
                   Maintenance
                 </label>
               </div>
               <div class="form-check-inline">
-                <input class="form-check-input" type="radio" name="vehicleAssignTypeUpdate" id="repairRadioByVehicle" [checked]="updateMaintenanceItem.type == 1"
-                [(ngModel)]="updateMaintenanceItem.type" value="1">
+                <input class="form-check-input" type="radio" name="vehicleAssignTypeUpdate" id="repairRadioByVehicle" [value]="1"
+                [(ngModel)]="updateMaintenance.type">
                 <label class="form-check-label" for="repairRadioByVehicle">
                   Repair
                 </label>
@@ -147,10 +146,12 @@
             </div>
            </div>
 
-           <div class="mb-3">
-            <label for="message-text" class="col-form-label">Description</label>
-            <textarea class="form-control" id="updateMaintenanceDescription" [(ngModel)]="updateMaintenanceItem.description"
-              name="updateMaintenanceDescription"></textarea>
+           <div class="card mb-2" *ngFor="let record of updateMaintenance.records; let index = index;">
+             <div class="card-body">
+              <h6 class="card-title"><span class="badge bg-secondary">{{index+1}}</span> Description</h6>
+              <textarea class="form-control" [(ngModel)]="record.description"
+                name="updateMaintenanceDescription{{index}}"></textarea>
+             </div>
           </div>
         </form>
       </div>

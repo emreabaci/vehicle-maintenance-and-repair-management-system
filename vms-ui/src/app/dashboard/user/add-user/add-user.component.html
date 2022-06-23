@@ -6,13 +6,13 @@
     <div class="d-flex justify-content-center m-2">
         <div class="bg-light p-3">
           <div class="form-check-inline">
-            <input class="form-check-input" type="radio" name="role" id="adminRadio" [(ngModel)]="role" value="admin" checked>
+            <input class="form-check-input" type="radio" name="role" id="adminRadio" [disabled]="isDisabledUserTypeSelection"  [(ngModel)]="role" value="admin" checked>
             <label class="form-check-label" for="adminRadio">
               Admin
             </label>
           </div>
           <div class="form-check-inline">
-            <input class="form-check-input" type="radio" name="role" id="userRadio" [(ngModel)]="role" value="user">
+            <input class="form-check-input" type="radio" name="role" id="userRadio" [(ngModel)]="role" value="user" [disabled]="isDisabledUserTypeSelection">
             <label class="form-check-label" for="userRadio">
               Vehicle
             </label>

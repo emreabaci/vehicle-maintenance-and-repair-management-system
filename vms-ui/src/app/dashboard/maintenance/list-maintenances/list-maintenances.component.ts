@@ -1,6 +1,9 @@
 import { AfterViewInit, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs';
 import { ValidateService } from 'src/app/core/services/validate.service';
+import { Maintenance } from '../../models/Maintenance';
+import { Record } from '../../models/Record';
+import { User } from '../../models/User';
 import { MaintenanceService } from '../services/maintenance.service';
 
 const ITEMS_PER_PAGE = 10;
@@ -14,14 +17,10 @@ export class ListMaintenancesComponent implements OnInit, OnDestroy, AfterViewIn
   // Update Section
   updateMaintenanceModal: any;
 
-  updateMaintenanceItem = {
-    id: "",
-    plateNumber: "",
-    type: 0,
-    description: ""
-  };
+  selectedMaintenance: Maintenance = new Maintenance();
+  updateMaintenance: Maintenance = new Maintenance();
+  allMaintenances: Maintenance[] = [];
 
-  allMaintenances: any[] = [];
   pageNo: number = 1;
   paginationConfig: any;
   @Input() plateNumber: string = "";
@@ -55,16 +54,10 @@ export class ListMaintenancesComponent implements OnInit, OnDestroy, AfterViewIn
       this.deleteMaintenanceId = button.getAttribute('data-bs-whatever');
     });
 
-    this.updateMaintenanceModal = document.getElementById('updateModal');
-    this.updateMaintenanceModal?.addEventListener('show.bs.modal', (event: any) => {
-      // Button that triggered the modal
-      const button = event.relatedTarget;
-
-      // Extract info from data-bs-* attributes
-      this.updateMaintenanceItem.id = button.getAttribute('data-bs-id');
-      this.updateMaintenanceItem.type = button.getAttribute('data-bs-type');
-      this.updateMaintenanceItem.description = button.getAttribute('data-bs-description');
-      this.updateMaintenanceItem.plateNumber = button.getAttribute('data-bs-plateNumber');
+    this.updateMaintenanceModal = document.getElementById('updateMaintenanceModal');
+    this.updateMaintenanceModal?.addEventListener('hide.bs.modal', (event: any) => {
+      console.warn("hide.bs.modal");
+      //this.updateMaintenance = new Maintenance();
     });
   }
 
@@ -100,17 +93,31 @@ export class ListMaintenancesComponent implements OnInit, OnDestroy, AfterViewIn
         };
 
         for(let maintenance of data.maintenances){
-          const _maintenance = {
+          const _maintenance = new Maintenance({
             id: maintenance._id,
             type: maintenance.type,
             plateNumber: maintenance.plateNumber,
-            createdByName: maintenance.createdBy?.name,
-            description: maintenance.description,
-            createdAt: maintenance.createdAt
+            createdAt: maintenance.createdAt,
+            createdBy: new User({
+              id: maintenance.createdBy._id,
+              name: maintenance.createdBy.name,
+              username: maintenance.createdBy.username
+            })
+          });
+
+          for(let record of maintenance.records){
+            _maintenance.records.push(new Record({
+              id: record._id,
+              description: record.description,
+              price: record?.price
+            }))
           }
 
           this.allMaintenances.push(_maintenance);
         }
+
+        console.warn(this.allMaintenances);
+
       } else {
         this.showError(data.msg);
       }
@@ -153,30 +160,38 @@ export class ListMaintenancesComponent implements OnInit, OnDestroy, AfterViewIn
   }
 
   updateItem(){
-    if(!this.validateService.validateUpdateMaintenance(this.updateMaintenanceItem.plateNumber, this.updateMaintenanceItem.description)){
+    if(!this.validateService.validateUpdateMaintenance(this.updateMaintenance)){
       this.showError('Can not be empty plate number and description fields');
       return;
     }
 
-    this.maintenanceService.updateMaintenance(
-      this.updateMaintenanceItem.id, 
-      this.updateMaintenanceItem.type, 
-      this.updateMaintenanceItem.plateNumber, 
-      this.updateMaintenanceItem.description).subscribe((data) => {
+    for(let i = 0; i < this.updateMaintenance.records.length; i++){
+      if(this.selectedMaintenance.records[i].description != this.updateMaintenance.records[i].description){
+        this.updateMaintenance.records[i].isUpdated = true;
+      }
+    }
+
+    this.maintenanceService.updateMaintenance(this.updateMaintenance).subscribe((data) => {
         if(data.success){
           for(let maintenance of this.allMaintenances){
-            if(maintenance.id == this.updateMaintenanceItem.id){
-              maintenance.type = this.updateMaintenanceItem.type;
-              maintenance.plateNumber = this.updateMaintenanceItem.plateNumber;
-              maintenance.description = this.updateMaintenanceItem.description;
+            if(maintenance.id == this.updateMaintenance.id){
+              maintenance.plateNumber = this.updateMaintenance.plateNumber;
+              maintenance.type = this.updateMaintenance.type;
+              maintenance.records = this.updateMaintenance.records;
               break;
             }
           }
           this.showSuccess('Update successful');
+          console.warn(this.allMaintenances);
         } else {
           this.showError('Update failed');
         }
       });
+  }
+
+  selectMaintenance(maintenance: Maintenance){
+    this.selectedMaintenance = maintenance;
+    this.updateMaintenance = new Maintenance(JSON.parse(JSON.stringify(maintenance)));
   }
 
   private showError(message: string){

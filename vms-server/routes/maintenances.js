@@ -1,36 +1,46 @@
 const express = require('express');
 const router = express.Router();
 const Maintenance = require('../models/maintenance');
+const Record = require('../models/record');
 const passport = require('passport');
 
 //Add maintenance
 router.post('/', passport.authenticate('jwt', {session:false}), async(req, res, next) => {
-    const maintenances = req.body.maintenances;
-    let newMaintenance = null;
+    const records = req.body.maintenance.records;
+    const newMaintenance = new Maintenance ({
+        type: req.body.maintenance.type,
+        createdBy: req.body.userID,
+        plateNumber: req.body.maintenance.plateNumber
+      });
 
-    for(var i = 0; i < maintenances.length; i++){
-        newMaintenance = new Maintenance ({
-            type: req.body.type,
-            description: maintenances[i].description,
-            createdBy: req.body.userId,
-            plateNumber: req.body.plateNumber
-          });
+    for(var i = 0; i < records.length; i++){
+        const _rec = new Record({
+            description: records[i].description,
+            owner: newMaintenance._id
+        });
 
-         await Maintenance.addMaintenance(newMaintenance);
+        await _rec.save();
+        newMaintenance.records.push(_rec);       
     }
 
+    await newMaintenance.save();
     res.json({success: true, msg: 'Maintenance created'});
 });
 
 //Update maintenance
 router.put('/', passport.authenticate('jwt', {session:false}), async(req, res, next) => {
-    const _id = req.body.id;
-    const _type = req.body.type;
-    const _plateNumber = req.body.plateNumber;
-    const _description = req.body.description;
+    const _id = req.body.updatedMaintenance.id;
+    const _type = req.body.updatedMaintenance.type;
+    const _plateNumber = req.body.updatedMaintenance.plateNumber;
+
+    for(let record of req.body.updatedMaintenance.records){
+        if(record?.isUpdated){
+            await Record.updateRecord({ _id: record.id }, { $set: {description: record.description}});
+        }
+    }
 
     const query = { _id };
-    const newvalues = { $set: {type: _type, plateNumber: _plateNumber,  description: _description}};
+    const newvalues = { $set: {type: _type, plateNumber: _plateNumber}};
 
     const _res = await Maintenance.updateMaintenance(query, newvalues);
 
@@ -38,7 +48,7 @@ router.put('/', passport.authenticate('jwt', {session:false}), async(req, res, n
 });
 
 //Get maintenances
-router.get('/', passport.authenticate('jwt', {session:false}), async(req, res, next) => {
+router.get('/', async(req, res, next) => {
     const pageNo = parseInt(req.query.pageNo);
     const size = parseInt(req.query.size);
     const plateNumber = req.query.plateNumber || null;

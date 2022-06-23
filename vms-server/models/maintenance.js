@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const ObjectId = require('mongodb').ObjectId;
+const Record = require('../models/record');
 
 // Maintenance Schema
 const MaintenanceSchema = mongoose.Schema ({
@@ -7,10 +8,6 @@ const MaintenanceSchema = mongoose.Schema ({
     type: Number,
     default: 0
   },
-    description: {
-      type: String,
-      required: true
-    },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User"
@@ -19,7 +16,16 @@ const MaintenanceSchema = mongoose.Schema ({
       type: String,
       required: true
     },
+    records: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Record'
+    }]
   }, { timestamps: true });
+
+  MaintenanceSchema.pre('remove', async function(next) {
+    await Record.deleteMany({owner: this._id});
+    next()
+  })
 
   const Maintenance = module.exports = mongoose.model('Maintenance', MaintenanceSchema);
 
@@ -27,15 +33,20 @@ const MaintenanceSchema = mongoose.Schema ({
     return maintenance.save();
   }
 
-  module.exports.deleteMaintenance = function(id) {
-    return Maintenance.deleteOne({_id: ObjectId(id)})
+  module.exports.deleteMaintenance = async function(id) {
+    const result = await Maintenance.findById(id);
+    return result.remove();
   }
 
   module.exports.getMaintenances = function(query, type) {
     if(type != undefined){
-      return Maintenance.find({type: type}, {}, query).populate("createdBy", "name username").sort({createdAt: -1});
+      return Maintenance.find({type: type}, {}, query)
+      .populate("records")
+      .populate("createdBy", "name username").sort({createdAt: -1});
     } else {
-      return Maintenance.find({}, {}, query).populate("createdBy", "name username").sort({createdAt: -1});
+      return Maintenance.find({}, {}, query)
+      .populate("records")
+      .populate("createdBy", "name username").sort({createdAt: -1});
     }
   }
 
@@ -49,9 +60,13 @@ const MaintenanceSchema = mongoose.Schema ({
 
   module.exports.getMaintenancesByPlateNumber = function(query, plateNumber, type) {
     if(type != undefined){
-      return Maintenance.find({ type: type, plateNumber: { $regex: `.*${plateNumber}.*`, $options: "i" } }, {}, query).populate("createdBy", "name username").sort({createdAt: -1});
+      return Maintenance.find({ type: type, plateNumber: { $regex: `.*${plateNumber}.*`, $options: "i" } }, {}, query)
+        .populate("records")
+        .populate("createdBy", "name username").sort({createdAt: -1});
     } else {
-      return Maintenance.find({ plateNumber: { $regex: `.*${plateNumber}.*`, $options: "i" } }, {}, query).populate("createdBy", "name username").sort({createdAt: -1});
+      return Maintenance.find({ plateNumber: { $regex: `.*${plateNumber}.*`, $options: "i" } }, {}, query)
+        .populate("records")
+        .populate("createdBy", "name username").sort({createdAt: -1});
     }
   }
 

@@ -1,7 +1,8 @@
-import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs';
 import { AuthService } from 'src/app/account/services/auth.service';
 import { Maintenance } from '../../models/Maintenance';
+import { Record } from '../../models/Record';
 import { VehicleAssignType } from '../../models/vehicle-assign-type';
 import { UserService } from '../../user/service/user.service';
 import { MaintenanceService } from '../services/maintenance.service';
@@ -12,11 +13,9 @@ import { MaintenanceService } from '../services/maintenance.service';
   styleUrls: ['./add-maintenance.component.scss']
 })
 export class AddMaintenanceComponent implements OnInit{
-  //plateNumber: string = ""
-  newMaintenanceDescription: string = "";
-  maintenancesFormItems: Maintenance[] = [];
   searchUsers: any[] = [];
-  vehicleAssignType: VehicleAssignType = VehicleAssignType.MAINTENANCE;
+  newMaintenance: Maintenance = new Maintenance();
+  newRecord: Record = new Record();
 
   errorMsg: string = "";
   successMsg: string = "";
@@ -60,37 +59,40 @@ export class AddMaintenanceComponent implements OnInit{
     this.subscriptions.push(subscription);
   }
 
+  get newMaintenanceObj(): string{
+    return JSON.stringify(this.newMaintenance);
+  }
+
   changeAssignType(type: number){
     if(type == VehicleAssignType.MAINTENANCE){
-      this.vehicleAssignType = VehicleAssignType.MAINTENANCE;
+      this.newMaintenance.type = VehicleAssignType.MAINTENANCE;
     } else if(type == VehicleAssignType.REPAIR){
-      this.vehicleAssignType = VehicleAssignType.REPAIR;
+      this.newMaintenance.type = VehicleAssignType.REPAIR;
     }
   }
 
-  addMaintenance(){
-    if(this.newMaintenanceDescription == "") return;
+  addRecord(){
+    if(this.newRecord.description == "") return;
 
-    const _data = this.newMaintenanceDescription;
-    this.maintenancesFormItems.push(new Maintenance(_data));
-    this.newMaintenanceDescription = "";
+    this.newMaintenance.records.push(this.newRecord);
+    this.newRecord = new Record();
   }
 
   deleteMaintenance(index: number){
-    this.maintenancesFormItems.splice(index, 1);
+    this.newMaintenance.records.splice(index, 1);
   }
 
   clearPlateNumber(){
-    if(this.maintenancesFormItems.length > 0) return;
+    if(this.newMaintenance.records.length > 0) return;
     this.plateNumber = "";
   }
 
   clearAll(){
-    this.maintenancesFormItems = [];
+    this.newMaintenance.records = [];
   }
 
   onAddMaintenanceSubmit(){
-    this.maintenanceService.createMaintenance(this.vehicleAssignType, this.authService.currentUser.id, this.plateNumber, this.maintenancesFormItems).subscribe((data) => {
+    this.maintenanceService.createMaintenance(this.authService.currentUser.id, this.newMaintenance).subscribe((data) => {
       if(data.success){
         this.showSuccess("Maintenance is saved");
         this.clearAll();
@@ -98,7 +100,7 @@ export class AddMaintenanceComponent implements OnInit{
       } else {
         this.showError("Something went wrong");
       }
-    })
+    });
   }
 
   searchByPlateNumber(event: any){
@@ -106,6 +108,7 @@ export class AddMaintenanceComponent implements OnInit{
   }
 
   selectedLiveSearch(data: any){
+    this.newMaintenance.plateNumber = data.username;
     this.plateNumber = data.username;
     this.searchUsers = [];
   }

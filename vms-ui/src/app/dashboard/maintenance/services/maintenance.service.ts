@@ -12,27 +12,27 @@ export class MaintenanceService {
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 
-  createMaintenance(type: VehicleAssignType, userId: string, plateNumber: string, maintenances: Maintenance[]){
+  createMaintenance(userID: number, maintenance: Maintenance){
     let httpHeaders = new HttpHeaders({
       'Content-Type' : 'application/json',
       'Cache-Control': 'no-cache',
       'Authorization': this.authService.authToken
     });   
 
-    return this.http.post('http://localhost:3000/maintenances', {type, userId, plateNumber, maintenances}, { headers: httpHeaders }).pipe(
+    return this.http.post('http://localhost:3000/maintenances', {userID, maintenance}, { headers: httpHeaders }).pipe(
       map(this.extractData),
       catchError(this.handleErrorObservable)
     )
   }
 
-  updateMaintenance(id: string, type: number, plateNumber: string, description: string){
+  updateMaintenance(updatedMaintenance: Maintenance){
     let httpHeaders = new HttpHeaders({
       'Content-Type' : 'application/json',
       'Cache-Control': 'no-cache',
       'Authorization': this.authService.authToken
     });   
 
-    return this.http.put('http://localhost:3000/maintenances', {id, type, plateNumber, description}, { headers: httpHeaders }).pipe(
+    return this.http.put('http://localhost:3000/maintenances', {updatedMaintenance}, { headers: httpHeaders }).pipe(
       map(this.extractData),
       catchError(this.handleErrorObservable)
     )

@@ -19,11 +19,14 @@ export class AddUserComponent implements OnInit {
   errorMsg: string = "";
   successMsg: string = "";
 
+  isDisabledUserTypeSelection = false;
+
   constructor(private validateService: ValidateService, private authService: AuthService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    if(this.route.snapshot.paramMap.get('type')){
+    if(this.route.snapshot.paramMap.get('type')){ 
       this.role = this.route.snapshot.paramMap.get('type') || "admin";
+      this.isDisabledUserTypeSelection = true;
     }
   }
 
@@ -68,7 +71,7 @@ export class AddUserComponent implements OnInit {
   }
 
   clearForm(){
-    this.role = "admin";
+    this.role = this.isDisabledUserTypeSelection ? 'user' : 'admin';
     this.name = "";
     this.username = "";
     this.email = "";

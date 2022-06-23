@@ -1,7 +1,18 @@
+import { Record } from "./Record";
+import { User } from "./User";
+import { VehicleAssignType } from "./vehicle-assign-type";
+
 export class Maintenance{
-    description: string
+    id: string;
+    type: VehicleAssignType = VehicleAssignType.MAINTENANCE;
+    createdBy: User;
+    plateNumber: string;
+    records: Record[] = [];
+    createdAt: string;
     
-    constructor(description: string){
-        this.description = description;
+    constructor(initializer?: Partial<Maintenance>){
+        if(initializer){
+            Object.assign(this, initializer);
+        }
     }
 }

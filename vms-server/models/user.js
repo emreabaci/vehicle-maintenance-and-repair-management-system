@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const ObjectId = require('mongodb').ObjectId;
+const Maintenance = require('./maintenance');
 
 // User Schema
 const UserSchema = mongoose.Schema ({
@@ -30,6 +31,14 @@ const UserSchema = mongoose.Schema ({
   },
 }, { timestamps: true });
 
+UserSchema.pre('remove', async function(next) {
+    const maintenances = await Maintenance.find({createdBy: this._id});
+    for(let maintenance of maintenances){
+        await maintenance.remove();
+    }
+    next()
+  })
+
 const User = module.exports = mongoose.model('User', UserSchema);
 
 module.exports.getUserById = function(id, callback) {
@@ -52,8 +61,9 @@ module.exports.addUser = function(newUser, callback) {
   });
 }
 
-module.exports.deleteUser = function(id) {
-    return User.deleteOne({_id: ObjectId(id)})
+module.exports.deleteUser = async function(id) {
+    const result = await User.findById(id);
+    return result.remove();
 }
 
 module.exports.comparePassword = function(candidatePassword, hash, callback) {

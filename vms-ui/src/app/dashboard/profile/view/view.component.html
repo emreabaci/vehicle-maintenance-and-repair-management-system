@@ -38,7 +38,7 @@
           <label for="name">Name</label>
         </div>
         <div class="form-floating mb-1">
-          <input type="text" class="form-control" [(ngModel)]="updateUserItem.username" id="username" name="username" [attr.placeholder]="updateUserItem.role == 'admin' ? 'Username' : 'Plate number'" [attr.disabled]="updateUserItem.role == 'user'">
+          <input type="text" class="form-control" [(ngModel)]="updateUserItem.username" id="username" name="username" [attr.placeholder]="updateUserItem.role == 'admin' ? 'Username' : 'Plate number'" [disabled]="updateUserItem.role == 'user'">
           <label for="username">{{updateUserItem.role == "admin" ? 'Username' : 'Plate number'}}</label>
         </div>
         <div class="form-floating mb-1">

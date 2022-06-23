@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Maintenance } from 'src/app/dashboard/models/Maintenance';
+import { Record } from 'src/app/dashboard/models/Record';
 
 @Injectable()
 export class ValidateService {
@@ -32,8 +33,8 @@ export class ValidateService {
     }
   }
 
-  validateUpdateMaintenance(plateNumber: string, description: string){
-    if(plateNumber == "" || description == ""){
+  validateUpdateMaintenance(maintenance: Maintenance){
+    if(maintenance.plateNumber == "" || maintenance.records.some((element, index) => element.description == '')){
       return false;
     } else {
       return true;
