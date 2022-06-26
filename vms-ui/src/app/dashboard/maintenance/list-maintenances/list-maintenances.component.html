@@ -1,5 +1,5 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-  <h1 class="h2">List All Maintenances</h1>
+  <h1 class="h2">List {{isAdmin ? 'All' : 'Your'}} Maintenances</h1>
 </div>
 
 <div class="alert alert-danger" role="alert" *ngIf="errorMsg">
@@ -11,12 +11,12 @@
 </div>
 
 <div class="input-group">
-  <span class="input-group-text">Search by plate number</span>
+  <span class="input-group-text">{{isAdmin ? 'Search by plate number' : 'Plate number'}}</span>
   <input type="text" aria-label="First name" class="form-control" [value]="plateNumber"
-    (input)="searchMaintenanceByPlateNumber($event)">
+    (input)="searchMaintenanceByPlateNumber($event)" [disabled]="!isAdmin">
 </div>
 
-<div class="d-flex mt-2">
+<div class="d-flex mt-2" *ngIf="isAdmin">
   <div class="bg-light p-1">
     <div class="form-check-inline">
       <input class="form-check-input" type="radio" name="vehicleAssignType" id="allRadio" checked (click)="changeAssignType(-1)">
@@ -65,7 +65,14 @@
         <td class="text-truncate">{{maintenance.records.length}}</td>
         <td class="text-truncate">{{maintenance.createdAt | date: 'dd/MM/yyyy HH:mm'}}</td>
         <td class="text-truncate col-1">
-          <a class="text-decoration-none m-1" data-bs-toggle="modal" data-bs-target="#updateMaintenanceModal" (click)="selectMaintenance(maintenance)">
+          <a *ngIf="!isAdmin" class="text-decoration-none m-1" data-bs-toggle="modal" data-bs-target="#viewMaintenanceModal" (click)="selectMaintenance(maintenance)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+              <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
+              <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
+            </svg>
+          </a>       
+
+          <a *ngIf="isAdmin" class="text-decoration-none m-1" data-bs-toggle="modal" data-bs-target="#updateMaintenanceModal" (click)="selectMaintenance(maintenance)">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
               class="bi bi-pencil-square" viewBox="0 0 16 16">
               <path
@@ -76,7 +83,7 @@
               </path>
             </svg>
           </a>
-          <a class="text-decoration-none m-1" data-bs-toggle="modal" data-bs-target="#deleteConfirm" [attr.data-bs-whatever]="maintenance.id">
+          <a *ngIf="isAdmin" class="text-decoration-none m-1" data-bs-toggle="modal" data-bs-target="#deleteConfirm" [attr.data-bs-whatever]="maintenance.id">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3"
               viewBox="0 0 16 16">
               <path
@@ -158,6 +165,57 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="updateItem()">Update</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- View Modal -->
+<div class="modal fade" id="viewMaintenanceModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">View</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label for="updateMaintenancePlateNumber" class="col-form-label">Plate Number</label>
+            <input type="text" class="form-control" id="updateMaintenancePlateNumber" name="updateMaintenancePlateNumber" [(ngModel)]="updateMaintenance.plateNumber" autocomplete="off" disabled>
+          </div>
+
+          <div class="d-flex justify-content-center m-2">
+            <div class="bg-light p-3">
+              <div class="form-check-inline">
+                <input class="form-check-input" type="radio" name="vehicleAssignTypeUpdate" id="maintenanceRadioByVehicle" [value]="0"
+                [(ngModel)]="updateMaintenance.type" disabled>
+                <label class="form-check-label" for="maintenanceRadioByVehicle">
+                  Maintenance
+                </label>
+              </div>
+              <div class="form-check-inline">
+                <input class="form-check-input" type="radio" name="vehicleAssignTypeUpdate" id="repairRadioByVehicle" [value]="1"
+                [(ngModel)]="updateMaintenance.type" disabled>
+                <label class="form-check-label" for="repairRadioByVehicle">
+                  Repair
+                </label>
+              </div>
+            </div>
+           </div>
+
+           <div class="card mb-2" *ngFor="let record of updateMaintenance.records; let index = index;">
+             <div class="card-body">
+              <h6 class="card-title"><span class="badge bg-secondary">{{index+1}}</span> Description</h6>
+              <textarea class="form-control" [(ngModel)]="record.description"
+                name="updateMaintenanceDescription{{index}}" disabled></textarea>
+             </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Ok</button>
       </div>
     </div>
   </div>

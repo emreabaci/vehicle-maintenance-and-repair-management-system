@@ -37,6 +37,10 @@ const routes: Routes = [
       canActivate: [AdminGuard]
     },
     {
+      path: 'maintenance/list/:own',
+      component: ListMaintenancesComponent
+    },
+    {
       path: 'profile/view',
       component: ViewComponent
     },

@@ -1,5 +1,7 @@
 import { AfterViewInit, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs';
+import { AuthService } from 'src/app/account/services/auth.service';
 import { ValidateService } from 'src/app/core/services/validate.service';
 import { Maintenance } from '../../models/Maintenance';
 import { Record } from '../../models/Record';
@@ -40,8 +42,12 @@ export class ListMaintenancesComponent implements OnInit, OnDestroy, AfterViewIn
   errorMsg: string = "";
   successMsg: string = "";
 
-  constructor(private maintenanceService: MaintenanceService, private validateService: ValidateService) { 
+  constructor(private maintenanceService: MaintenanceService, private validateService: ValidateService, private route: ActivatedRoute, private authService: AuthService) { 
 
+  }
+
+  get isAdmin(): boolean{
+    return this.authService.isAdmin;
   }
   
   ngAfterViewInit(): void {
@@ -68,7 +74,13 @@ export class ListMaintenancesComponent implements OnInit, OnDestroy, AfterViewIn
     });
     this.subscriptions.push(subscription);
 
-    this.getAllMaintenances(this.pageNo);
+    if(this.route.snapshot.paramMap.get('own')){ 
+      this._plateNumber = this.authService.currentUser.username;
+      this.plateNumber = this._plateNumber;
+      this.getAllMaintenances(this.pageNo, this._plateNumber);
+    } else {
+      this.getAllMaintenances(this.pageNo);
+    }
   }
 
   ngOnDestroy(): void {

@@ -36,7 +36,7 @@
       <div class="form-check-inline">
         <input class="form-check-input" type="radio" name="userType" id="userRadio" (change)="filterByRole('user')">
         <label class="form-check-label" for="userRadio">
-          User
+          Vehicle
         </label>
       </div>
     </div>
@@ -58,7 +58,7 @@
       <tbody>
         <tr *ngFor="let user of allUsers | paginate: paginationConfig; let index = index;">
           <td>{{index + 1}}</td>
-          <td class="text-truncate">{{user.role == 'admin' ? 'Admin' : 'User'}}</td>
+          <td class="text-truncate">{{user.role == 'admin' ? 'Admin' : 'Vehicle'}}</td>
           <td class="text-truncate">{{user.name}}</td>
           <td class="text-truncate">{{user.username}}</td>
           <td class="text-truncate">{{user.email}}</td>

@@ -17,6 +17,10 @@ export class DashboardComponent implements OnInit {
     return this.authService.isAdmin;
   }
 
+  get userName():string{
+    return this.authService.user?.username;
+  }
+
   ngOnInit(): void {
     const _activePage = localStorage.getItem('active_page');
 
