@@ -6,11 +6,8 @@ const Maintenance = require('../models/maintenance');
 // Statistics
 router.get('/', async (req, res, next) => {
     const totalUser = await User.getUsersTotalCount();
-    const maintenances = await Maintenance.getMaintenancesByAggrate();
-    const repairs = await Maintenance.getRepaitsByAggrate();
-    
-    const totalMaintenances = maintenances.length;
-    const totalRepairs = repairs.length;
+    const totalMaintenances = await Maintenance.getMaintenancesByAggrate();
+    const totalRepairs = await Maintenance.getRepairsByAggrate();
 
     res.json({success: true, totalUser, totalMaintenances, totalRepairs});
 });

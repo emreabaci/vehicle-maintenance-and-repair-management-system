@@ -83,13 +83,15 @@ const MaintenanceSchema = mongoose.Schema ({
   }
 
   module.exports.getMaintenancesByAggrate = function(){
-    return Maintenance.aggregate([
+    return Maintenance.count({type: 0});
+    /*return Maintenance.aggregate([
       {$match: {type: 0}},
-      { $group : { _id : {type: "$type", plateNumber: "$plateNumber"} } } ] );
+      { $group : { _id : {type: "$type", plateNumber: "$plateNumber"} } } ] );*/
   }
 
-  module.exports.getRepaitsByAggrate = function(){
-    return Maintenance.aggregate([
-      {$match: {type: 1}},
-      { $group : { _id : {type: "$type", plateNumber: "$plateNumber"} } } ] );
+  module.exports.getRepairsByAggrate = function(){
+    return Maintenance.count({type: 1});
+    // return Maintenance.aggregate([
+    //   {$match: {type: 1}},
+    //   { $group : { _id : {type: "$type", plateNumber: "$plateNumber"} } } ] );
   }
